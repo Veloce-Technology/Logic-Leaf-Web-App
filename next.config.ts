@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  reactCompiler: true,
+  reactCompiler: false,
+  // Empty turbopack config — silence Turbopack/webpack mismatch warning
+  turbopack: {},
 };
 
 export default nextConfig;
