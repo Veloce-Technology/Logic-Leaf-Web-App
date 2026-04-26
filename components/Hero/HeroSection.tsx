@@ -70,28 +70,31 @@ export default function HeroSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full h-screen bg-black overflow-hidden flex items-center justify-center font-dm"
+      className="relative w-full h-screen overflow-hidden flex items-center justify-center font-dm"
     >
-      {/* Background Gradient / Glow behind model */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#0a0a10_0%,#000000_100%)] z-[-2]" />
+      {/* Absolute Dark Background Layer */}
+      <div className="absolute inset-0 bg-black z-[-10]" />
 
-      {/* Centered Robot & Portal - Guaranteed Background Layer */}
+      {/* Background Gradient / Glow behind model */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#0a0a10_0%,#000000_100%)] z-[-5]" />
+
+      {/* Centered Robot & Portal - Interaction Layer */}
       <div
         ref={robotContainerRef}
-        className="absolute inset-0 z-[-1] flex items-center justify-center translate-y-[8%] md:translate-y-10"
+        className="absolute inset-0 z-1 flex items-center justify-center translate-y-[8%] md:translate-y-10"
       >
-        <div className="relative w-full h-full flex items-center justify-center">
+        <div className="relative w-full h-full flex items-center justify-center pointer-events-auto">
           {/* Glowing Portal Orb */}
           <div className="absolute w-[80vw] h-[80vw] rounded-full bg-green-glow/[0.04] blur-[80px] md:blur-[100px] pointer-events-none z-[-2]" />
           <div className="absolute w-[80vw] md:w-[50vh] h-[80vw] md:h-[50vh] rounded-full border border-green-primary/[0.08] pointer-events-none z-[-2]" />
 
-          <div className="w-full h-full flex items-center justify-center pointer-events-auto relative z-[-1] scale-[0.65] md:scale-110 md:max-w-[1200px]">
+          <div className="w-full h-full flex items-center justify-center relative z-1 scale-[0.65] md:scale-110 md:max-w-[1200px]">
             <SplineRobot />
           </div>
         </div>
       </div>
 
-      {/* Main Content Layout - Guaranteed Foreground Layer */}
+      {/* Main Content Layout - Top Interaction Layer */}
       <div
         ref={contentRef}
         className="relative z-10 w-full h-full max-w-[1400px] px-6 md:px-12 flex flex-col md:flex-row items-end justify-between pt-26 pb-10 md:pb-24 gap-8 md:gap-0 pointer-events-none"

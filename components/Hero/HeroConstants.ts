@@ -7,7 +7,7 @@ export const HERO_CONTENT = {
 };
 
 export const HERO_ANIMATION = {
-  zoomEnd: "+=150%", // Reduced scroll distance for faster transition
+  zoomEnd: "+=130%", // Reduced scroll distance for faster transition
   robotScale: 4,
   robotBlur: 40,
 };
