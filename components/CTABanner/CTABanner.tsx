@@ -119,7 +119,7 @@ export default function CTABanner() {
               <span className="text-xs font-black uppercase tracking-[0.2em]">
                 {CTA_CONTENT.buttonText}
               </span>
-              <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center transition-transform group-hover/btn:rotate-45">
+              <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center transition-transform group-hover/btn:-rotate-45">
                 <svg
                   width="14"
                   height="14"
