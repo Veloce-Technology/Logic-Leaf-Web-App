@@ -8,7 +8,7 @@ const SplineRobot = forwardRef<HTMLDivElement>(function SplineRobot(_, ref) {
       className="relative w-full h-full min-h-[500px] flex items-center justify-center overflow-hidden"
     >
       {/* Ambient glow rings */}
-      <div className="absolute inset-[5%] rounded-full bg-[radial-gradient(circle,rgba(13,205,106,0.1)_0%,transparent_70%)] animate-pulse pointer-events-none z-0" />
+      {/* <div className="absolute inset-[5%] rounded-full bg-[radial-gradient(circle,rgba(13,205,106,0.1)_0%,transparent_70%)] animate-pulse pointer-events-none z-0" /> */}
 
       <iframe
         src="https://my.spline.design/genkubgreetingrobot-sVPkRpWHJm358qeKAAJJzy8L/"

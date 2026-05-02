@@ -1,58 +1,141 @@
 "use client";
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { TEAM_MEMBERS } from "../../constants/SiteConstants";
+import { gsap } from "@/lib/gsap";
+import { TEAM_MEMBERS, TEAM_CONTENT } from "./TeamConstants";
+import Image from "next/image";
 
 export default function TeamSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".team-reveal",
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          stagger: 0.15,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        },
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="team" className="relative py-32 md:py-48 bg-black overflow-hidden font-dm">
+    <section
+      id="team"
+      ref={sectionRef}
+      className="relative bg-black py-20 overflow-hidden font-dm border-t border-white/5"
+    >
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 2px 2px, white 1px, transparent 0)",
+            backgroundSize: "40px 40px",
+          }}
+        />
+      </div>
+
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
-        
-        {/* Section Title */}
-        <div className="max-w-4xl mb-24 md:mb-32">
-          <motion.span
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-green-primary font-bold tracking-[0.3em] uppercase text-[10px] md:text-xs block mb-6"
-          >
-            The Culture
-          </motion.span>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-5xl md:text-8xl font-medium text-white tracking-tighter"
-          >
-            Driven by <br/> craftsmanship.
-          </motion.h2>
+        {/* Header - Aligned with TimelineSection */}
+        <div className="mb-20 flex flex-col md:flex-row md:items-end md:justify-between gap-10">
+          <div>
+            <span className="team-reveal text-green-primary font-bold tracking-[0.3em] uppercase text-[10px] md:text-xs block mb-5">
+              {TEAM_CONTENT.subtitle}
+            </span>
+            <h2 className="team-reveal text-[clamp(3rem,6vw,4rem)] font-bold text-white leading-[1] tracking-[-0.03em]">
+              {TEAM_CONTENT.title.split(" ").map((word, i) => (
+                <span key={i}>
+                  {word === "Innovators" ? (
+                    <span className="text-green-primary">{word}</span>
+                  ) : (
+                    word
+                  )}{" "}
+                </span>
+              ))}
+            </h2>
+          </div>
+          <p className="team-reveal text-base md:text-lg text-white/80 font-light max-w-xs md:mb-3 md:text-right">
+            {TEAM_CONTENT.description}
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
+        {/* Team Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {TEAM_MEMBERS.map((member, i) => (
-            <motion.div
-              key={member.name}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.8 }}
-              className="flex flex-col group"
+            <div
+              key={member.id}
+              className="team-reveal h-[450px] [perspective:1000px] group"
             >
-               {/* Minimalist Profile Block */}
-               <div className="aspect-[4/5] bg-white/[0.02] border border-white/5 rounded-[40px] mb-8 relative overflow-hidden flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-700">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <span className="text-9xl font-black text-white/5 group-hover:text-green-primary/10 transition-colors select-none">
-                    {member.name.charAt(0)}
-                  </span>
-                  
-                  {/* Glass Tag over image area */}
-                  <div className="absolute bottom-8 left-8 right-8">
-                     <span className="text-xs font-bold text-green-primary uppercase tracking-[0.2em]">{member.role}</span>
-                  </div>
-               </div>
+              <motion.div className="relative w-full h-full transition-all duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                {/* Front Side */}
+                <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-[32px] overflow-hidden bg-white/[0.03] border border-white/10 p-2">
+                  <div className="relative w-full h-full rounded-[24px] overflow-hidden bg-[#0c0c0e]">
+                    <Image
+                      src={member.image}
+                      alt={member.name}
+                      fill
+                      className="object-cover object-top opacity-80 transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 
-               <h3 className="text-3xl font-medium text-white mb-4 tracking-tight">{member.name}</h3>
-               <p className="text-lg text-white/30 font-light leading-relaxed max-w-xs">{member.bio}</p>
-            </motion.div>
+                    <div className="absolute bottom-8 left-8 right-8">
+                      <h3 className="text-xl font-bold text-white mb-1">
+                        {member.name}
+                      </h3>
+                      <span className="text-green-primary text-[10px] font-bold uppercase tracking-widest">
+                        {member.role}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Back Side */}
+                <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-[32px] overflow-hidden bg-green-primary border border-green-primary p-8 flex flex-col justify-between">
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <h3 className="text-2xl font-black text-black">
+                        {member.name}
+                      </h3>
+                      <span className="text-black/60 text-[10px] font-black uppercase tracking-widest">
+                        {member.role}
+                      </span>
+                    </div>
+                    <p className="text-black/80 text-sm leading-relaxed font-medium">
+                      {member.bio}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-4">
+                    {Object.entries(member.socials).map(([key, val]) => (
+                      <a
+                        key={key}
+                        href={val}
+                        className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center hover:bg-black hover:text-white transition-all text-black"
+                      >
+                        <span className="text-[10px] font-black uppercase">
+                          {key[0]}
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           ))}
         </div>
       </div>

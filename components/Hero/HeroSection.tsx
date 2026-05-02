@@ -9,7 +9,6 @@ export default function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const robotContainerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (
@@ -19,17 +18,17 @@ export default function HeroSection() {
     )
       return;
 
-    // Scroll-triggered zoom transition
+    // Tight scrub (0.6) = responsive, no lag/freeze feeling
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
         start: "top top",
-        end: HERO_ANIMATION.zoomEnd,
-        pin: true,
-        scrub: 1.5,
+        end: "bottom top",
+        scrub: 0.6,
       },
     });
 
+    // Robot zooms and fades out — no black overlay flash
     tl.to(
       robotContainerRef.current,
       {
@@ -42,24 +41,16 @@ export default function HeroSection() {
       0,
     );
 
+    // Content slides up and fades out in parallel
     tl.to(
       contentRef.current,
       {
         opacity: 0,
-        y: -100,
-        duration: 0.5,
+        y: -80,
+        duration: 0.6,
         ease: "power2.in",
       },
       0,
-    );
-
-    tl.to(
-      overlayRef.current,
-      {
-        opacity: 1,
-        duration: 0.4,
-      },
-      0.8,
     );
 
     return () => {
@@ -78,26 +69,27 @@ export default function HeroSection() {
       {/* Background Gradient / Glow behind model */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#0a0a10_0%,#000000_100%)] z-[-5]" />
 
-      {/* Centered Robot & Portal - Interaction Layer */}
+      {/* Centered Robot & Portal - z-0 so content above is z-10 */}
       <div
         ref={robotContainerRef}
-        className="absolute inset-0 z-1 flex items-center justify-center translate-y-[8%] md:translate-y-10"
+        className="absolute inset-0 z-[1] flex items-center justify-center translate-y-[8%] md:translate-y-10"
       >
         <div className="relative w-full h-full flex items-center justify-center pointer-events-auto">
           {/* Glowing Portal Orb */}
           <div className="absolute w-[80vw] h-[80vw] rounded-full bg-green-glow/[0.04] blur-[80px] md:blur-[100px] pointer-events-none z-[-2]" />
           <div className="absolute w-[80vw] md:w-[50vh] h-[80vw] md:h-[50vh] rounded-full border border-green-primary/[0.08] pointer-events-none z-[-2]" />
 
-          <div className="w-full h-full flex items-center justify-center relative z-1 scale-[0.65] md:scale-110 md:max-w-[1200px]">
+          {/* Scale 0.75 on mobile to give breathing room for the model */}
+          <div className="w-full h-full flex items-center justify-center relative z-[1] scale-[0.75] md:scale-110 md:max-w-[1200px]">
             <SplineRobot />
           </div>
         </div>
       </div>
 
-      {/* Main Content Layout - Top Interaction Layer */}
+      {/* Main Content Layout - pointer-events-none so mouse passes through to iframe */}
       <div
         ref={contentRef}
-        className="relative z-10 w-full h-full max-w-[1400px] px-6 md:px-12 flex flex-col md:flex-row items-end justify-between pt-26 pb-10 md:pb-24 gap-8 md:gap-0 pointer-events-none"
+        className="relative z-[10] w-full h-full max-w-[1400px] px-6 md:px-12 flex flex-col md:flex-row items-end justify-between pt-26 pb-10 md:pb-24 gap-8 md:gap-0 pointer-events-none"
       >
         {/* Left Bottom Corner */}
         <motion.div
@@ -172,7 +164,7 @@ export default function HeroSection() {
         </motion.div>
       </div>
 
-      {/* Screen bottom indicator */}
+      {/* Scroll indicator */}
       <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 z-30 w-6 h-6 md:w-8 md:h-8 opacity-20 pointer-events-none">
         <svg
           viewBox="0 0 24 24"
@@ -184,12 +176,6 @@ export default function HeroSection() {
           <path d="M12 8v8M8 12h8" />
         </svg>
       </div>
-
-      {/* Reveal Overlay */}
-      <div
-        ref={overlayRef}
-        className="absolute inset-0 bg-black opacity-0 pointer-events-none z-50"
-      />
     </section>
   );
 }

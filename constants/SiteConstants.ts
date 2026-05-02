@@ -21,51 +21,56 @@ export const LOGO_LIST = [
 export const SERVICES = [
   {
     title: "Custom Software",
-    description: "Tailored development solutions designed to meet your specific business needs and scale with your growth.",
-    icon: "Code",
+    description: "We craft bespoke software solutions that align perfectly with your business objectives and operational needs.",
+    image: "/images/services/card-pattern.png"
   },
   {
-    title: "Cloud Solutions",
-    description: "Secure and scalable cloud infrastructure to power your digital transformation and remote operations.",
-    icon: "Cloud",
+    title: "Product Development",
+    description: "We guide your product from concept to launch, ensuring a robust and market-ready solution.",
+    image: "/images/services/card-pattern.png"
   },
   {
-    title: "UI/UX Design",
-    description: "Human-centric design that prioritizes user experience while maintaining a premium, modern aesthetic.",
-    icon: "PenTool",
+    title: "Project Management Expert Oversight",
+    description: "We provide end-to-end project management, ensuring timely delivery and efficient resource utilization.",
+    image: "/images/services/card-pattern.png"
   },
   {
-    title: "Mobile Apps",
-    description: "High-performance native and cross-platform mobile applications for iOS and Android.",
-    icon: "Smartphone",
+    title: "Enterprise Solutions",
+    description: "We deliver scalable software solutions designed to meet the complex demands of large organizations.",
+    image: "/images/services/card-pattern.png"
   }
 ];
 
 export const PROCESS_TIMELINE = [
   {
     step: "01",
-    title: "Discovery",
-    description: "Deep dive into your requirements, business goals, and target audience.",
+    title: "Requirement Gathering",
+    description: "Deep dive into your business needs, identifying key challenges and defining the full project scope.",
   },
   {
     step: "02",
-    title: "Strategic Planning",
-    description: "Defining the architecture, technology stack, and project roadmap.",
+    title: "Design & Planning",
+    description: "Creating wireframes, interactive UI/UX prototypes, and defining the technical architecture.",
   },
   {
     step: "03",
-    title: "Design & UX",
-    description: "Creating wireframes and high-fidelity prototypes for your approval.",
+    title: "Development",
+    description: "Agile engineering with high-quality code, continuous integration, and transparent progress tracking.",
   },
   {
     step: "04",
-    title: "Development",
-    description: "Agile engineering with continuous integration and quality assurance.",
+    title: "Testing & QA",
+    description: "Rigorous automated and manual testing to ensure your product is bug-free and meets all performance standards.",
   },
   {
     step: "05",
-    title: "Launch & Beyond",
-    description: "Deployment, monitoring, and ongoing support for your solution.",
+    title: "Deployment",
+    description: "Securely launching your solution to the production environment with zero-downtime strategies.",
+  },
+  {
+    step: "06",
+    title: "Support & Maintenance",
+    description: "Continuous monitoring, security updates, and technical assistance to keep your software at its peak.",
   }
 ];
 

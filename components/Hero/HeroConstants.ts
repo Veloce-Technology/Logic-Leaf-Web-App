@@ -7,7 +7,7 @@ export const HERO_CONTENT = {
 };
 
 export const HERO_ANIMATION = {
-  zoomEnd: "+=130%", // Reduced scroll distance for faster transition
-  robotScale: 4,
-  robotBlur: 40,
+  zoomEnd: "+=80%",   // Shorter pin = faster, snappier scroll into next section
+  robotScale: 3,      // Less extreme zoom avoids GPU stutter
+  robotBlur: 30,
 };

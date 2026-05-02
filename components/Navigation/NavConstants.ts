@@ -1,8 +1,9 @@
 export const NAV_LINKS = [
-  { label: 'Products', href: '#products' },
-  { label: 'Solutions', href: '#solutions' },
+  { label: 'About', href: '#about' },
   { label: 'Services', href: '#services' },
-  { label: 'Pricing', href: '#pricing' },
+  { label: 'Portfolio', href: '#portfolio' },
+  { label: 'Team', href: '#team' },
+  { label: 'Contact', href: '#contact' },
 ];
 
 export const NAV_CONFIG = {

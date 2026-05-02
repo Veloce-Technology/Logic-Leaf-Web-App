@@ -1,98 +1,207 @@
 "use client";
-import { motion } from "framer-motion";
-import { SERVICES } from "../../constants/SiteConstants";
+import { useEffect, useRef } from "react";
+import { gsap } from "@/lib/gsap";
+import { SERVICES, SERVICES_CONTENT } from "./ServicesConstants";
+import Image from "next/image";
 
 export default function ServicesSection() {
-  return (
-    <section id="services" className="relative py-32 md:py-48 bg-black overflow-hidden font-dm">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
-        
-        {/* Header Section */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12 mb-24 md:mb-32">
-          <div className="max-w-2xl">
-            <motion.span
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="text-green-primary font-bold tracking-[0.3em] uppercase text-[10px] md:text-xs block mb-6"
-            >
-              Our Expertise
-            </motion.span>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-5xl md:text-7xl font-medium text-white leading-[0.95] tracking-tighter"
-            >
-              Solutions designed <br/> for human impact.
-            </motion.h2>
-          </div>
-          
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="lg:max-w-sm"
-          >
-            <p className="text-lg text-white/30 font-light leading-relaxed">
-              We leverage emerging technologies to build robust, scalable, and beautifully designed digital products.
-            </p>
-          </motion.div>
-        </div>
+  const sectionRef = useRef<HTMLElement>(null);
+  const leftColRef = useRef<HTMLDivElement>(null);
+  const rightColRef = useRef<HTMLDivElement>(null);
 
-        {/* Services High-Fidelity Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          {SERVICES.map((service, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.8 }}
-              className="group relative p-12 md:p-16 rounded-[40px] bg-white/[0.02] border border-white/5 hover:border-green-primary/20 transition-all duration-700 overflow-hidden"
-            >
-              {/* Subtle Corner Glow */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-green-primary/5 blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              
-              <div className="relative z-10">
-                <div className="mb-12 flex justify-between items-start">
-                   <div className="text-green-primary">
-                      <ServiceIcon name={service.icon} />
-                   </div>
-                   <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-x-4 group-hover:translate-x-0">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white/40"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-                   </div>
+  useEffect(() => {
+    if (!sectionRef.current || !rightColRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const rightHeight = rightColRef.current!.offsetHeight;
+      const viewHeight = window.innerHeight;
+
+      const scrollDistance = Math.max(0, rightHeight - viewHeight + 100);
+
+      if (scrollDistance > 0) {
+        gsap.to(rightColRef.current, {
+          y: -scrollDistance,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top top",
+            end: () => `+=${scrollDistance}`,
+            pin: true,
+            scrub: 0.8,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+      }
+
+      // Initial reveal animations
+      const label = sectionRef.current!.querySelector("[data-label]");
+      const title = sectionRef.current!.querySelector("[data-title]");
+      const desc = sectionRef.current!.querySelector("[data-desc]");
+      const cards = sectionRef.current!.querySelectorAll("[data-svc-card]");
+
+      gsap.fromTo(
+        [label, title, desc],
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        },
+      );
+
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 70%",
+          },
+        },
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section
+      id="services"
+      ref={sectionRef}
+      className="relative bg-black overflow-hidden font-dm w-full max-h-[1450px] md:max-h-screen"
+    >
+      {/* Subtle glow accents */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-primary/[0.02] blur-[120px] pointer-events-none" />
+
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
+          {/* Left Column: Pinned design matching AboutSection */}
+          <div
+            ref={leftColRef}
+            className="flex flex-col gap-8 pt-30 lg:py-32 lg:h-screen lg:justify-start"
+          >
+            <div className="space-y-8">
+              <span
+                data-label
+                className="text-green-primary font-bold tracking-[0.3em] uppercase text-[10px] md:text-xs block"
+              >
+                {SERVICES_CONTENT.subtitle}
+              </span>
+
+              <h2
+                data-title
+                className="text-[clamp(2.4rem,6vw,4rem)] font-bold text-white leading-[1.1] tracking-[-0.03em]"
+              >
+                {SERVICES_CONTENT.title.split(" ").map((word, i) => (
+                  <span key={i}>
+                    {word === "Sizes" ? (
+                      <span className="text-green-primary">{word}</span>
+                    ) : (
+                      word
+                    )}{" "}
+                    {(i === 1 || i === 4) && <br />}
+                  </span>
+                ))}
+              </h2>
+
+              <p
+                data-desc
+                className="text-lg md:text-xl text-white/80 leading-relaxed font-light max-w-sm"
+              >
+                {SERVICES_CONTENT.description}
+              </p>
+            </div>
+
+            <div className="pt-4">
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-4 group text-white/50 hover:text-green-primary transition-all duration-500"
+              >
+                <span className="text-xs font-black uppercase tracking-[0.15em]">
+                  {SERVICES_CONTENT.cta}
+                </span>
+                <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-green-primary group-hover:scale-105 transition-all">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M3 8h10M9 4l4 4-4 4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          {/* Right Column: Glassmorphism Card Stack */}
+          <div
+            ref={rightColRef}
+            className="flex flex-col gap-6 md:gap-8 lg:py-32"
+          >
+            {SERVICES.map((service, i) => (
+              <div
+                key={i}
+                data-svc-card
+                className="group relative rounded-3xl md:rounded-[32px] overflow-hidden bg-white/[0.03] border border-white/10 backdrop-blur-3xl p-8 md:p-12 min-h-[300px] md:min-h-[400px] flex flex-col justify-between transition-all duration-700 hover:bg-white/[0.06] hover:border-green-primary/30 shadow-2xl"
+              >
+                {/* Background Pattern - Highly visible and right-aligned */}
+                <div className="absolute top-0 right-0 w-1/2 h-full z-0 opacity-[0.15] group-hover:opacity-[0.25] transition-all duration-1000 ease-out scale-105 group-hover:scale-110">
+                  <Image
+                    src={service.image}
+                    alt={service.title}
+                    fill
+                    className="object-cover object-right"
+                  />
+                  {/* Glass-to-dark gradient blend */}
+                  <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/20 to-black/80" />
                 </div>
 
-                <h3 className="text-3xl font-medium text-white mb-6 tracking-tight">
-                  {service.title}
-                </h3>
-                <p className="text-lg text-white/40 font-light leading-relaxed max-w-sm group-hover:text-white/60 transition-colors">
-                  {service.description}
-                </p>
+                {/* Glass reflective overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none" />
+
+                {/* Content */}
+                <div className="relative z-10 space-y-4 max-w-[65%] transform group-hover:-translate-y-1 transition-transform duration-700">
+                  <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight tracking-tight group-hover:text-green-primary transition-colors duration-500">
+                    {service.title}
+                  </h3>
+                </div>
+
+                <div className="relative z-10 max-w-[75%] transform group-hover:translate-y-1 transition-transform duration-700">
+                  <p className="text-white/60 text-base md:text-lg leading-relaxed font-light group-hover:text-white/70 transition-colors duration-500">
+                    {service.description}
+                  </p>
+                </div>
+
+                {/* Accent glow on hover */}
+                <div
+                  className="absolute bottom-0 right-0 w-64 h-64 blur-[100px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none"
+                  style={{
+                    backgroundColor:
+                      service.accent || "rgba(13, 205, 106, 0.05)",
+                  }}
+                />
+
+                {/* Interactive Border accent */}
+                <div className="absolute inset-0 rounded-3xl md:rounded-[32px] border border-white/0 group-hover:border-green-primary/10 transition-colors duration-700 pointer-events-none" />
               </div>
-            </motion.div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>
   );
-}
-
-function ServiceIcon({ name }: { name: string }) {
-  // Simple icon selector based on constant string
-  switch (name) {
-    case "Code":
-      return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>;
-    case "Cloud":
-      return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>;
-    case "PenTool":
-      return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.5 1.5"></path><path d="M7 11l5-5"></path></svg>;
-    case "Smartphone":
-      return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>;
-    default:
-      return null;
-  }
 }
