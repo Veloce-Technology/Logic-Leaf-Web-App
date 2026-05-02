@@ -1,7 +1,7 @@
 export const FOOTER_CONTENT = {
   logoText: "Logic Leaf",
   tagline: "Pioneering innovation through code, creativity, and strategic thinking.",
-  copyright: "© 2024 Logic Leaf Technologies. All rights reserved.",
+  copyright: "© 2026 Logic Leaf Technologies. All rights reserved.",
   sections: [
     {
       title: "Company",

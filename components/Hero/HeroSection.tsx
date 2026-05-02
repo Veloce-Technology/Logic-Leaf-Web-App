@@ -18,45 +18,58 @@ export default function HeroSection() {
     )
       return;
 
-    // Tight scrub (0.6) = responsive, no lag/freeze feeling
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: 0.6,
-      },
-    });
+    const ctx = gsap.context(() => {
+      // Create a specific timeline for this component's scroll effects
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: 0.6,
+          invalidateOnRefresh: true,
+        },
+      });
 
-    // Robot zooms and fades out — no black overlay flash
-    tl.to(
-      robotContainerRef.current,
-      {
-        scale: HERO_ANIMATION.robotScale,
-        opacity: 0,
-        filter: `blur(${HERO_ANIMATION.robotBlur}px)`,
-        duration: 1,
-        ease: "power2.inOut",
-      },
-      0,
-    );
+      tl.to(
+        robotContainerRef.current,
+        {
+          scale: HERO_ANIMATION.robotScale,
+          opacity: 0,
+          filter: `blur(${HERO_ANIMATION.robotBlur}px)`,
+          duration: 1,
+          ease: "power2.inOut",
+        },
+        0,
+      );
 
-    // Content slides up and fades out in parallel
-    tl.to(
-      contentRef.current,
-      {
-        opacity: 0,
-        y: -80,
-        duration: 0.6,
-        ease: "power2.in",
-      },
-      0,
-    );
+      tl.to(
+        contentRef.current,
+        {
+          opacity: 0,
+          y: -80,
+          duration: 0.6,
+          ease: "power2.in",
+        },
+        0,
+      );
+    }, sectionRef);
 
-    return () => {
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-    };
+    return () => ctx.revert(); // Safely revert ONLY this component's animations
   }, []);
+
+  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const targetId = href.substring(1);
+    const targetElement = document.getElementById(targetId);
+
+    if (targetElement) {
+      gsap.to(window, {
+        duration: 1.5,
+        scrollTo: { y: targetElement, offsetY: 80 },
+        ease: "power4.inOut",
+      });
+    }
+  };
 
   return (
     <section
@@ -125,14 +138,15 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
           className="flex flex-col gap-8 md:gap-10 w-full md:max-w-[400px] md:mb-4 pointer-events-auto"
         >
-          <p className="text-[14px] md:text-base leading-relaxed text-white/50 font-light tracking-wide m-0">
+          <p className="text-[14px] md:text-base leading-relaxed text-white/80 font-light tracking-wide m-0">
             {HERO_CONTENT.description}
           </p>
 
           <div className="flex flex-wrap items-center gap-4 md:gap-5">
             <a
               href="#contact"
-              className="flex items-center justify-between gap-4 md:gap-5 bg-green-primary text-black pl-6 md:pl-8 pr-2.5 md:pr-3 py-2.5 md:py-3 rounded-full font-black group transition-all hover:scale-[1.05] hover:shadow-[0_0_30px_rgba(13,205,106,0.3)] active:scale-[0.98] text-sm md:text-base"
+              onClick={(e) => handleCtaClick(e, "#contact")}
+              className="flex items-center justify-between gap-4 md:gap-5 bg-green-primary text-black pl-6 md:pl-8 pr-2.5 md:pr-3 py-2.5 md:py-3 rounded-full font-black group transition-all hover:scale-[1.05] hover:shadow-[0_0_30px_rgba(13,205,106,0.3)] active:scale-[0.98] text-sm md:text-base cursor-pointer"
             >
               <span>{HERO_CONTENT.ctaPrimary}</span>
               <div className="bg-black text-green-primary w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center">
@@ -156,7 +170,8 @@ export default function HeroSection() {
 
             <a
               href="#about"
-              className="px-6 md:px-8 py-3 md:py-4 rounded-full bg-white/[0.03] border border-white/10 text-white font-medium backdrop-blur-md transition-all hover:bg-white/[0.08] hover:border-green-primary/30 text-sm md:text-base"
+              onClick={(e) => handleCtaClick(e, "#about")}
+              className="px-6 md:px-8 py-3 md:py-4 rounded-full bg-white/[0.03] border border-white/10 text-white font-medium backdrop-blur-md transition-all hover:bg-white/[0.08] hover:border-green-primary/30 text-sm md:text-base cursor-pointer"
             >
               {HERO_CONTENT.ctaSecondary}
             </a>

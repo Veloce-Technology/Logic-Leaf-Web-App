@@ -1,14 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { gsap } from "@/lib/gsap";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 export default function BackToTop() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const toggleVisibility = () => {
-      // Show button when page is scrolled down past 500px (roughly Hero section)
+      // Show button when page is scrolled down past 500px
       if (window.scrollY > 500) {
         setIsVisible(true);
       } else {
@@ -16,16 +16,25 @@ export default function BackToTop() {
       }
     };
 
-    window.addEventListener("scroll", toggleVisibility);
+    window.addEventListener("scroll", toggleVisibility, { passive: true });
     return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
 
   const scrollToTop = () => {
-    // Using GSAP for a smooth, cinematic scroll to top
+    // Cinematic scroll to top using GSAP
     gsap.to(window, {
       duration: 1.5,
-      scrollTo: 0,
+      scrollTo: { y: 0, autoKill: false },
       ease: "power4.inOut",
+      onStart: () => {
+        // Disable scroll interaction during jump to prevent freezing
+        document.body.style.pointerEvents = "none";
+      },
+      onComplete: () => {
+        // Re-enable interactions and refresh ScrollTrigger
+        document.body.style.pointerEvents = "auto";
+        ScrollTrigger.refresh();
+      },
     });
   };
 
@@ -44,7 +53,7 @@ export default function BackToTop() {
         >
           {/* Decorative Ring */}
           <div className="absolute inset-0 rounded-full border border-green-primary/0 group-hover:border-green-primary/20 group-hover:scale-125 transition-all duration-700 pointer-events-none" />
-
+          
           <svg
             width="20"
             height="20"

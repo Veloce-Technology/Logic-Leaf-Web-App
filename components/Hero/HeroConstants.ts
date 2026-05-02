@@ -1,5 +1,5 @@
 export const HERO_CONTENT = {
-  headline: "Innovate your\nvision with\nSoftware\nSolutions.",
+  headline: "Innovate your\nvision with\nSoftware\nSolutions",
   description: "Logic Leaf specializes in custom software development, delivering tailored solutions that drive business growth and efficiency.",
   ctaPrimary: "Get Started",
   ctaSecondary: "Discover More",

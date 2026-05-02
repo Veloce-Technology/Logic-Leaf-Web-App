@@ -18,6 +18,9 @@ import MissionSection from "@/components/Mission/MissionSection";
 import CarouselSection from "@/components/CarouselSection/CarouselSection";
 import CTABanner from "@/components/CTABanner/CTABanner";
 import BackToTop from "@/components/Navigation/BackToTop";
+import Preloader from "@/components/Navigation/Preloader";
+
+
 
 
 export default function Home() {
@@ -25,7 +28,9 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen bg-black overflow-x-hidden">
+      <Preloader />
       {/* Background Layer: Three.js Particles */}
+
       <div className="fixed inset-0 z-0 pointer-events-none opacity-30">
         <ParticleField />
       </div>
