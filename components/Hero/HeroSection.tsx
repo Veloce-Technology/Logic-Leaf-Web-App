@@ -9,6 +9,7 @@ export default function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const robotContainerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const iframeWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (
@@ -19,13 +20,14 @@ export default function HeroSection() {
       return;
 
     const ctx = gsap.context(() => {
-      // Create a specific timeline for this component's scroll effects
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "bottom top",
-          scrub: 0.6,
+          end: "+=100%",
+          scrub: 1.5,
+          pin: true,
+          anticipatePin: 1,
           invalidateOnRefresh: true,
         },
       });
@@ -33,10 +35,9 @@ export default function HeroSection() {
       tl.to(
         robotContainerRef.current,
         {
-          scale: HERO_ANIMATION.robotScale,
+          scale: 0.1,
           opacity: 0,
-          filter: `blur(${HERO_ANIMATION.robotBlur}px)`,
-          duration: 1,
+          filter: "blur(10px)",
           ease: "power2.inOut",
         },
         0,
@@ -46,18 +47,47 @@ export default function HeroSection() {
         contentRef.current,
         {
           opacity: 0,
-          y: -80,
-          duration: 0.6,
+          scale: 0.9,
+          y: -150,
           ease: "power2.in",
         },
         0,
       );
     }, sectionRef);
 
-    return () => ctx.revert(); // Safely revert ONLY this component's animations
+    return () => ctx.revert();
   }, []);
 
-  const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  // Interaction logic: Allow hover but kill clicks
+  useEffect(() => {
+    const wrapper = iframeWrapperRef.current;
+    if (!wrapper) return;
+
+    const iframe = wrapper.querySelector("iframe");
+    if (!iframe) return;
+
+    const handleMouseDown = (e: MouseEvent) => {
+      // Temporarily disable pointer events on the iframe so the click doesn't go through
+      iframe.style.pointerEvents = "none";
+
+      // Re-enable after a short delay so hover still works afterward
+      setTimeout(() => {
+        iframe.style.pointerEvents = "auto";
+      }, 100);
+    };
+
+    // Use capture phase to intercept the event before it reaches the iframe
+    wrapper.addEventListener("mousedown", handleMouseDown, true);
+
+    return () => {
+      wrapper.removeEventListener("mousedown", handleMouseDown, true);
+    };
+  }, []);
+
+  const handleCtaClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
     e.preventDefault();
     const targetId = href.substring(1);
     const targetElement = document.getElementById(targetId);
@@ -74,37 +104,32 @@ export default function HeroSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full h-screen overflow-hidden flex items-center justify-center font-dm"
+      className="relative w-full h-screen overflow-hidden flex items-center justify-center font-dm bg-black"
     >
-      {/* Absolute Dark Background Layer */}
       <div className="absolute inset-0 bg-black z-[-10]" />
-
-      {/* Background Gradient / Glow behind model */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#0a0a10_0%,#000000_100%)] z-[-5]" />
 
-      {/* Centered Robot & Portal - z-0 so content above is z-10 */}
       <div
         ref={robotContainerRef}
-        className="absolute inset-0 z-[1] flex items-center justify-center translate-y-[8%] md:translate-y-10"
+        className="absolute inset-0 z-[1] flex items-center justify-center"
       >
-        <div className="relative w-full h-full flex items-center justify-center pointer-events-auto">
-          {/* Glowing Portal Orb */}
+        <div
+          ref={iframeWrapperRef}
+          className="relative w-full h-full flex items-center justify-center pointer-events-auto touch-none translate-y-[8%] md:translate-y-10"
+        >
           <div className="absolute w-[80vw] h-[80vw] rounded-full bg-green-glow/[0.04] blur-[80px] md:blur-[100px] pointer-events-none z-[-2]" />
           <div className="absolute w-[80vw] md:w-[50vh] h-[80vw] md:h-[50vh] rounded-full border border-green-primary/[0.08] pointer-events-none z-[-2]" />
 
-          {/* Scale 0.75 on mobile to give breathing room for the model */}
           <div className="w-full h-full flex items-center justify-center relative z-[1] scale-[0.75] md:scale-110 md:max-w-[1200px]">
             <SplineRobot />
           </div>
         </div>
       </div>
 
-      {/* Main Content Layout - pointer-events-none so mouse passes through to iframe */}
       <div
         ref={contentRef}
         className="relative z-[10] w-full h-full max-w-[1400px] px-6 md:px-12 flex flex-col md:flex-row items-end justify-between pt-26 pb-10 md:pb-24 gap-8 md:gap-0 pointer-events-none"
       >
-        {/* Left Bottom Corner */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -123,7 +148,6 @@ export default function HeroSection() {
               ),
             )}
           </h1>
-
           <div className="flex flex-col gap-3">
             <span className="text-[9px] md:text-[11px] font-bold text-white/40 uppercase tracking-[0.2em]">
               {HERO_CONTENT.trustedText}
@@ -131,7 +155,6 @@ export default function HeroSection() {
           </div>
         </motion.div>
 
-        {/* Right Bottom Corner */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -158,7 +181,7 @@ export default function HeroSection() {
                   className="md:w-4 md:h-4"
                 >
                   <path
-                    d="M6 12l4-4-4-4"
+                    d="M6 12ll4-4-4-4"
                     stroke="currentColor"
                     strokeWidth="3"
                     strokeLinecap="round"
@@ -167,7 +190,6 @@ export default function HeroSection() {
                 </svg>
               </div>
             </a>
-
             <a
               href="#about"
               onClick={(e) => handleCtaClick(e, "#about")}
@@ -179,7 +201,6 @@ export default function HeroSection() {
         </motion.div>
       </div>
 
-      {/* Scroll indicator */}
       <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 z-30 w-6 h-6 md:w-8 md:h-8 opacity-20 pointer-events-none">
         <svg
           viewBox="0 0 24 24"
